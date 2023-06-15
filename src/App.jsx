@@ -2,12 +2,13 @@ import { } from 'react'
 import './App.css'
 import AuthContextProvider from './contexts/Auth'
 import FilesContextProvider from './contexts/Files'
-import { ConfigProvider, Layout, Space } from 'antd'
+import { ConfigProvider, Layout } from 'antd'
 import Sidebar from './components/layouts/Sidebar'
-import Maintenance from './Maintenance'
+// import Maintenance from './Maintenance'
 import Navbar from './components/layouts/Navbar'
+import AppRoute from './components/layouts/AppRoutes'
 
-const { Sider, Content, Footer } = Layout;
+const { Content } = Layout;
 function App() {
 
   return (
@@ -29,10 +30,13 @@ function App() {
                 </Footer> */}
               {/* </Sider> */}
             </Layout>
-            <Layout className='w-full bg-[#eee] h-[95vh] my-4 mr-4 md:ml-0 ml-[5rem] rounded-xl'>
-              <Content>
+            <Layout className='w-full bg-[#eee] h-[95vh] overflow-hidden my-4 mr-4 md:ml-0 ml-[5rem] rounded-xl'>
+              <Content className='h-full overflow-hidden'>
                 {/* <h1>WELCOME</h1> */}
                 <Navbar />
+                <div className='h-full px-6 overflow-x-hidden overflow-y-auto'>
+                  <AppRoute />
+                </div>
                 {/* <Maintenance /> */}
               </Content>
             </Layout>

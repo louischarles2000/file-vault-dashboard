@@ -22,46 +22,54 @@ import {
 } from '@ant-design/icons';
 import { Button, Menu } from 'antd';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function getItem(label, key, icon, children, type) {
+function getItem(label, key, icon, children, onClick) {
   return {
     key,
     icon,
     children,
     label,
-    type,
+    onClick,
   };
 }
-const items = [
-  getItem('Dashboard', '1', <PieChartOutlined />),
-  getItem('My Files', '2', <FolderOutlined />),
-  getItem('Recent', '3', <ClockCircleOutlined />),
-  getItem('Teams', 'sub1', <GroupOutlined />, [
-    getItem('Accounts', '5'),
-    getItem('IT', '6'),
-    getItem('General', '7'),
-    getItem('Admin', '8'),
-  ]),
-  getItem('More Options', 'sub2', <AppstoreOutlined />, [
-    getItem('Option 9', '9'),
-    getItem('Option 10', '10'),
-    getItem('Submenu', 'sub3', null, [getItem('Option 11', '11'), getItem('Option 12', '12')]),
-  ]),
-  
-];
 
-const accountItems = [
-  getItem('Account (Louis Charles)', 'sub3', <UserOutlined />, [
-    getItem('Acount Info', '13', <InfoCircleOutlined/>),
-    getItem('Logout', '14', <LogoutOutlined />),
-  ]),
-]
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate()
+
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
+
+  const navigateTo = (route, params) => navigate(`/${route}`, { state: params })
+
+  const items = [
+    getItem('Dashboard', '1', <PieChartOutlined />, null, () => navigateTo('dashboard')),
+    getItem('My Files', '2', <FolderOutlined />, null, () => navigateTo('my-files')),
+    getItem('Recent', '3', <ClockCircleOutlined />, null, () => navigateTo('recent')),
+    getItem('Teams', 'sub1', <GroupOutlined />, [
+      getItem('Accounts', '5'),
+      getItem('IT', '6'),
+      getItem('General', '7'),
+      getItem('Admin', '8'),
+    ]),
+    getItem('More Options', 'sub2', <AppstoreOutlined />, [
+      getItem('Option 9', '9'),
+      getItem('Option 10', '10'),
+      getItem('Submenu', 'sub3', null, [getItem('Option 11', '11'), getItem('Option 12', '12')]),
+    ]),
+    
+  ];
+
+  const accountItems = [
+    getItem('Account (Louis Charles)', 'sub3', <UserOutlined />, [
+      getItem('Acount Info', '13', <InfoCircleOutlined/>, null, () => navigateTo('account')),
+      getItem('Logout', '14', <LogoutOutlined />),
+    ]),
+  ]
+
   return (
     <div
       className='bg-[#000300] h-full md:relative absolute'
@@ -85,7 +93,12 @@ const Sidebar = () => {
           mode="inline"
           theme="dark"
           inlineCollapsed={collapsed}
-          items={items}
+          items={[
+            ...items,
+            {
+      
+            }
+          ]}
         />
         <Menu
           defaultSelectedKeys={['1']}

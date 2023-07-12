@@ -13,7 +13,7 @@ function TabHeader(props) {
     <div className='flex flex-row items-center gap-2 cursor-pointer'>
       {props.header ? 
       <FaFolder color='#555' size={20}/> :
-      <AiFillHome color='#555' size={20}/>
+      <AiFillHome color='#555' size={20} onClick={props.backHome}/>
       }
       {(props.title && (!props.path || props.path.length < 1)) && 
         <p className='font-bold text-[#555]'>{props.title}</p>

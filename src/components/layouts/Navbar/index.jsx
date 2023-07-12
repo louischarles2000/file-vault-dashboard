@@ -1,13 +1,19 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { AiOutlineSearch, AiOutlineMore, AiOutlineCloudUpload, AiOutlineSortAscending, AiOutlineSortDescending } from 'react-icons/ai'
 import { BsFolderPlus, BsFilter } from 'react-icons/bs' 
 import MainButton from '../../elements/common/MainButton'
 import OutlinedButton from '../../elements/common/OutlinedButton'
+import { Upload } from 'antd'
+import { FilesContext } from '../../../contexts/Files'
 
 function Navbar() {
+  const { setCreatingFolder } = useContext(FilesContext);
   const [ascending, setAscending] = useState([false]);
   const onSort = () => {
     setAscending(!ascending)
+  }
+  const handleNewFolder = () => {
+    setCreatingFolder(true)
   }
   return (
     <div className='flex justify-between w-full px-8 py-5 align-middle'>
@@ -17,14 +23,16 @@ function Navbar() {
           className='w-full pl-2 flex-1 outline-none placeholder-slate-300 text-[14px] text-[#555]'/>
       </div>
       <div className='gap-5 flex flex-row items-center'>
-        <MainButton>
-          <AiOutlineCloudUpload size={20}/>
-          Upload
-        </MainButton>
+        <Upload>
+          <MainButton>
+            <AiOutlineCloudUpload size={20}/>
+            Upload
+          </MainButton>
+        </Upload>
         <OutlinedButton onClick={onSort}>
           {ascending ? <AiOutlineSortAscending size={20}/> : <AiOutlineSortDescending size={20}/>}
         </OutlinedButton>
-        <OutlinedButton onClick={onSort}>
+        <OutlinedButton onClick={handleNewFolder}>
           <BsFolderPlus size={20}/>
         </OutlinedButton>        
         <OutlinedButton onClick={onSort}>

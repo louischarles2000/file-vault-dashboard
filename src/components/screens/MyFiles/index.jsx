@@ -1,87 +1,52 @@
-import { Empty } from 'antd'
-import { useEffect, useState } from 'react'
+import { Empty, Spin } from 'antd'
+import { useContext, useEffect, useState } from 'react'
 import TabHeader from './TabHeader'
-import FolderListItem from './FolderListItem'
-
-const fs = [
-  {
-    id: 'item1',
-    name: 'Stuff',
-    type: 'folder',
-    parentId: 'root'
-  },
-  {
-    id: 'item2',
-    name: 'Home stuff',
-    type: 'folder',
-    parentId: 'item1'  
-  },
-  {
-    id: 'item3',
-    name: 'Home records',
-    type: 'file', 
-    parentId: 'item1'         
-  },
-  {
-    id: 'item4',
-    name: 'Work',
-    type: 'folder',
-    parentId: 'root'
-  },
-  {
-    id: 'item5',
-    name: 'Work stuff',
-    type: 'folder',
-    parentId: 'item2'   
-  },
-  {
-    id: 'item6',
-    name: 'Customers',
-    type: 'folder',
-    parentId: 'item4',
-  },
-  {
-    id: 'item7',
-    name: 'Records',
-    type: 'file',
-    parentId: 'item6'
-  },
-  {
-    id: 'item8',
-    name: 'Games',
-    type: 'folder',
-    parentId: 'root',
-  },
-  {
-    id: 'item9',
-    name: 'Game stuff',
-    type: 'folder',
-    parentId: 'item8'    
-  },
-]
+import FolderFileListItem from './FolderFileListItem'
+import { Upload } from 'antd'
+import { InboxOutlined, FolderAddOutlined } from '@ant-design/icons';
+import { FilesContext } from '../../../contexts/Files'
+import OutlinedButton from '../../elements/common/OutlinedButton'
+import NewFolder from './components/CreateFolder'
+import Loading from '../../elements/common/Loading'
 
 function MyFiles() {
-  const [ folders, setFolders ] = useState(fs)
+  const { files, setActiveDir, fetchingFiles, activeDirFiles, setActiveDirFiles } = useContext(FilesContext)
   const [ paths, setPaths ] = useState([]);
-  const [ activeDir, setActiveDir ] = useState([]);
+  // const [ activeDirFiles, setActiveDirFiles ] = useState([]);
   const [ rootFiles, setRootFiles ] = useState([]);
 
   useEffect(() => {
-    setFolders(fs);
-    const rf = fs.filter(f => f.parentId === 'root');
-    setRootFiles(rf)
-  }, []);
+    // setFolders(fs);
+    console.log(fetchingFiles)
+    if(files) {
+      // console.log(files)
+      const rf = files.filter(f => f.parent.name === 'root');
+      setRootFiles(rf)
+      return
+    }
+    setRootFiles([])
+  }, [files, activeDirFiles, fetchingFiles]);
 
   useEffect(() => {
     // console.log(paths);
     if(paths.length > 0){
       const activePath = paths[paths.length - 1];
-      const actDir = folders.filter(f => f.parentId === activePath.id);
-      setActiveDir(actDir);
+      // console.log(activePath)
+      // getFiles({
+      //   variables: {
+      //     dir: activePath.id
+      //   }
+      // })
+      const actDir = files.filter(f => f.parent.id === activePath.id);
+      // setActiveDirFiles(actDir);
     }
-  }, [paths, folders]);
+  }, [paths, files]);
+
+
 
   const onClickRootFolder = folder => {
+    if(folder.type !== 'folder') return;
+    setActiveDir(folder)
     setPaths([
       {
         name: folder.name,
@@ -91,6 +56,9 @@ function MyFiles() {
   }
 
   const onClickItem = folder => {
+    // Open File options
+    if(folder.type !== 'folder') return;
+    setActiveDir(folder)
     const pths = paths
     pths.push(
       {
@@ -100,14 +68,16 @@ function MyFiles() {
     );
     // console.log(pths)
     setPaths(pths);
-    refetchActiveDir();
+    // refetchActiveDir();
   }
 
   const refetchActiveDir = () => {
     if(paths.length > 0){
-      const activePath = paths[paths.length - 1];
-      const actDir = folders.filter(f => f.parentId === activePath.id);
-      setActiveDir(actDir);
+      const activePath = paths[paths.length - 2];
+      // const actDir = activeDirFiles.filter(f => f.parent.id === activePath.id);
+      // console.log(activePath)
+      setActiveDir(activePath)
+      // setActiveDirFiles(actDir);
     }
   }
 
@@ -120,16 +90,40 @@ function MyFiles() {
     refetchActiveDir();
   }
 
+  const activeDirContent = (
+    <>
+      <div className='ml-2'>
+      {activeDirFiles
+          .map(folder => (
+            <FolderFileListItem
+              item={folder}
+              key={folder.id}
+              isListItem
+              onClick={() => onClickItem(folder)}
+              />
+          ))}
+      </div>
+      {activeDirFiles.length < 1 && <Empty description='There no items yet' className='align-middle mt-16'/>}
+    </>
+  )
+
   return (
   <div className='h-full flex col-span-2'>
     <div className='w-[20%] h-full overflow-hidden overflow-y-auto pb-[10rem] border-r-2 mr-6'>
       <TabHeader header title='My Folders'/>
+      <NewFolder/>
       {/* Folders */}
       <div className='ml-2'>
+        {rootFiles.length < 1 &&
+          <OutlinedButton className='mx-5 mt-5 text-[20px]'>
+            <FolderAddOutlined size={20}/>
+            
+          </OutlinedButton>
+        }
         {rootFiles
         .map(folder => (
-          <FolderListItem 
-            name={folder.name}
+          <FolderFileListItem 
+            item={folder}
             key={folder.id}
             onClick={() => onClickRootFolder(folder)}
             />
@@ -137,18 +131,29 @@ function MyFiles() {
       </div>
     </div>
     <div className='flex-1 h-full overflow-y-auto overflow-x-hidden'>
-      <TabHeader title='My Files' path={paths} reset={resetActiveDir}/>
-      <div className='ml-2'>
-        {activeDir
-        .map(folder => (
-          <FolderListItem 
-            name={folder.name}
-            key={folder.id}
-            onClick={() => onClickItem(folder)}
-            />
-        ))}
-      </div>
-      {activeDir.length < 1 && <Empty description='There no items yet' className='align-middle mt-16'/>}
+      <TabHeader 
+        title='My Files' 
+        path={paths} 
+        reset={resetActiveDir} 
+        backHome={() => {
+          setPaths([])
+          setActiveDir(null)
+          setActiveDirFiles([])
+        }}
+        />
+      
+        {fetchingFiles ? 
+        <Spin tip='Fetching..' size='large' className='my-20 ml-[45%]'></Spin>
+        : activeDirContent}
+      <Upload.Dragger height={'30vh'} type='drag' style={{ marginTop: 20 }}>
+        <p className="ant-upload-drag-icon">
+        <InboxOutlined />
+        </p>
+        <p className="ant-upload-text">Click or drag file to this area to upload</p>
+        <p className="ant-upload-hint">
+          Support for a single or bulk upload
+        </p>
+      </Upload.Dragger>
     </div>
   </div>
   )

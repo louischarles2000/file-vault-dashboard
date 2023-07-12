@@ -1,12 +1,3 @@
-// import {} from 'react'
-
-// function Sidebar() {
-//   return (
-//     <div className='p-3 bg-[#000300] w-full h-full'>
-//       <h2 className='text-[#80df9a] text-xl font-bold my-2'>FileVault.</h2>
-//     </div>
-//   )
-// }
 
 import {
   AppstoreOutlined,
@@ -21,8 +12,9 @@ import {
   InfoCircleOutlined,
 } from '@ant-design/icons';
 import { Button, Menu } from 'antd';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../../contexts/Auth';
 
 function getItem(label, key, icon, children, onClick) {
   return {
@@ -36,6 +28,7 @@ function getItem(label, key, icon, children, onClick) {
 
 
 const Sidebar = () => {
+  const { logout, auth } = useContext(AuthContext)
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate()
 
@@ -64,9 +57,9 @@ const Sidebar = () => {
   ];
 
   const accountItems = [
-    getItem('Account (Louis Charles)', 'sub3', <UserOutlined />, [
+    getItem(`Account (${auth.name.first} ${auth.name.last})`, 'sub3', <UserOutlined />, [
       getItem('Acount Info', '13', <InfoCircleOutlined/>, null, () => navigateTo('account')),
-      getItem('Logout', '14', <LogoutOutlined />),
+      getItem('Logout', '14', <LogoutOutlined />, null, logout),
     ]),
   ]
 

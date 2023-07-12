@@ -3,9 +3,12 @@ import {} from 'react'
 
 function LinkButton(props) {
   return (
-    <h2 className='text-bold hover:underline cursor-pointer text-[#80df9a]'>
+    <div 
+      onClick={props.onClick} 
+      className={'text-bold hover:underline cursor-pointer text-[#80df9a] ' + props.className}
+      >
         {props.title}
-    </h2>
+    </div>
   )
 }
 

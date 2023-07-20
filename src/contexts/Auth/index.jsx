@@ -50,6 +50,11 @@ function AuthContextProvider(props) {
       console.log({...error})
       if( error && error.networkError && error.networkError.statusCode === 401){
         console.log({...error.networkError})
+        setAuthAlert({
+          type: 'error',
+          description: "Session expired, Please login again.",
+          title: 'Session Expired!'
+        });
         setAuth(null);
         localStorage.removeItem('token');
         return;

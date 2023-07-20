@@ -6,11 +6,10 @@ import { Upload } from 'antd'
 import { InboxOutlined, FolderAddOutlined } from '@ant-design/icons';
 import { FilesContext } from '../../../contexts/Files'
 import OutlinedButton from '../../elements/common/OutlinedButton'
-import NewFolder from './components/CreateFolder'
-import Loading from '../../elements/common/Loading'
+import FileDetails from './components/FileDetails'
 
 function MyFiles() {
-  const { files, setActiveDir, fetchingFiles, activeDirFiles, setActiveDirFiles } = useContext(FilesContext)
+  const { files, setActiveDir, fetchingFiles, activeDirFiles, setActiveDirFiles, selectedFile, setSelectedFile } = useContext(FilesContext)
   const [ paths, setPaths ] = useState([]);
   // const [ activeDirFiles, setActiveDirFiles ] = useState([]);
   const [ rootFiles, setRootFiles ] = useState([]);
@@ -90,9 +89,13 @@ function MyFiles() {
     refetchActiveDir();
   }
 
+  const handleFileDrop = (e) => {
+    setSelectedFile(e.file)
+  }
+
   const activeDirContent = (
     <>
-      <div className='ml-2'>
+      <div className='ml-2 my-5 mb-20'>
       {activeDirFiles
           .map(folder => (
             <FolderFileListItem
@@ -109,9 +112,9 @@ function MyFiles() {
 
   return (
   <div className='h-full flex col-span-2'>
+    <FileDetails />
     <div className='w-[20%] h-full overflow-hidden overflow-y-auto pb-[10rem] border-r-2 mr-6'>
       <TabHeader header title='My Folders'/>
-      <NewFolder/>
       {/* Folders */}
       <div className='ml-2'>
         {rootFiles.length < 1 &&
@@ -145,7 +148,7 @@ function MyFiles() {
         {fetchingFiles ? 
         <Spin tip='Fetching..' size='large' className='my-20 ml-[45%]'></Spin>
         : activeDirContent}
-      <Upload.Dragger height={'30vh'} type='drag' style={{ marginTop: 20 }}>
+      <Upload.Dragger height={'30vh'} type='drag' listType='picture-card' style={{ marginTop: 20 }} onChange={handleFileDrop}>
         <p className="ant-upload-drag-icon">
         <InboxOutlined />
         </p>

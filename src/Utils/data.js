@@ -3,6 +3,8 @@ import sms from '../assets/sms.png'
 import authApp from '../assets/vault.png'
 // import authApp from '../assets/auth_app.png'
 
+export const BITS_IN_GB = 8589934592;
+
 export const mfaMethods = [
   {
     name: 'email',

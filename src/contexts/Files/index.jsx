@@ -11,10 +11,13 @@ export const FilesContext = createContext();
 function FilesContextProvider(props) {
   const { auth } = useContext(AuthContext);
   const [ files, setFiles ] = useState([]);
+  const [ loadingDashboard, setLoadingDashboard ] = useState(false);
   const [ creatingFolder, setCreatingFolder ] = useState(false);
   const [ fetchingFiles, setFetchingFiles ] = useState(false);
   const [ activeDir, setActiveDir ] = useState(null);
   const [ activeDirFiles, setActiveDirFiles ] = useState([]);
+  const [ selectedFile, setSelectedFile ] = useState(null);
+  const [ fileId, setFileId ] = useState(null);
 
   const [ getFiles, {  refetch } ] = useLazyQuery(fileQueries.GET_FILES, {
     variables: {
@@ -62,10 +65,13 @@ function FilesContextProvider(props) {
   return (
     <FilesContext.Provider value={{
       files, setFiles,
+      selectedFile, setSelectedFile,
+      loadingDashboard, setLoadingDashboard,
       activeDir, setActiveDir,
       creatingFolder, setCreatingFolder,
       fetchingFiles, getFiles,
       activeDirFiles, setActiveDirFiles,
+      fileId, setFileId,
     }}>
       {props.children}
     </FilesContext.Provider>

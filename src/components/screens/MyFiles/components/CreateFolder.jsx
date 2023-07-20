@@ -6,7 +6,12 @@ import { useMutation } from '@apollo/client';
 import { fileQueries } from '../../../../graphql/FileQueries';
 
 function NewFolder() {
-  const { creatingFolder, setCreatingFolder, activeDir, files, setFiles, activeDirFiles, setActiveDirFiles } = useContext(FilesContext);
+  const { 
+    creatingFolder, setCreatingFolder, 
+    activeDir, files, 
+    setFiles, activeDirFiles, 
+    setActiveDirFiles 
+  } = useContext(FilesContext);
   const [ name, setName ] = useState('');
   const [ error, setError ] = useState('');
   const [ currentFolders, setCurrentFolders ] = useState([]);

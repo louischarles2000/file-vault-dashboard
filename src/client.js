@@ -2,11 +2,17 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from "@apollo/client/link/context";
 import { decryptToken } from './Utils/functions';
+import { createUploadLink } from 'apollo-upload-client';
 
 const httpLink = createHttpLink({
   // uri: 'http://localhost:3000/graphql'
   uri: import.meta.env.VITE_GRAPHQL_API
 });
+
+// const link = createUploadLink({
+//   // uri: 'http://localhost:3000/graphql'
+//   uri: import.meta.env.VITE_GRAPHQL_API
+// })
 
 const authLink = setContext((_, { headers }) => {
   // Get the token from localStorage

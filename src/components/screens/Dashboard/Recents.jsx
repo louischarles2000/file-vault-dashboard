@@ -1,9 +1,10 @@
 /* eslint-disable react/prop-types */
-import {} from 'react'
+import { useEffect, useState } from 'react'
 import Heading from '../../elements/common/Heading'
-import { Table, Tag } from 'antd'
+import { Spin, Table, Tag } from 'antd'
 import { AiOutlineArrowUp } from 'react-icons/ai'
 import LinkButton from '../../elements/common/LinkButton'
+import { _convertBits, _formatDate } from '../../../Utils/functions'
 
 const Title = (props) => <p className='flex flex-row items-center gap-3'>{props.title} <AiOutlineArrowUp /></p>
 
@@ -18,6 +19,7 @@ const columns = [
     title:  <Title title='Size'/>,
     dataIndex: 'size',
     key: 'size',
+    render: (size) => _convertBits(size)
   },
   {
     title:  'Folder',
@@ -43,14 +45,10 @@ const columns = [
     title: <Title title='Last Modified'/>,
     key: 'date',
     dataIndex: 'date',
-    // render: (_, record) => (
-    //   <Space size="middle">
-    //     <a>Invite {record.name}</a>
-    //   </Space>
-    // ),
+    render: (date) => _formatDate(date)
   },
 ];
-const data = [
+const _data = [
   {
     key: '1',
     name: 'Final Project',
@@ -74,7 +72,29 @@ const data = [
   },
 ];
 
-function Recents() {
+function Recents(props) {
+  const [ data, setData ] = useState(null);
+  useEffect(() => {
+    // console.log(props.recents[0].parent.name)
+    if(!props.recents) return;
+    try {
+      const _d = props.recents.map(item => {
+        const folder = item.parent.name === 'root' ? 'My files' : item.parent.name;
+        return {
+          name: item.name,
+          size: item.size,
+          date: item.updated_at,
+          tags: [folder],
+          key: item.id,
+        }
+      });
+      setData(_d);
+    } catch (error) {
+      console.log(error)
+    }
+  }, [props.recents]);
+
+  if(!data) return <Spin size='large' className='mx-auto m-20 ml-[45%]'/>
   return (
     <div className='my-10'>
       <div className='flex flex-row justify-between mr-6'>
